@@ -42,7 +42,7 @@ public class PDFPostJobTest {
   public void before() {
     project = mock(Project.class);
     settings = mock(Settings.class);
-    fs = new DefaultFileSystem();
+    fs = mock(DefaultFileSystem.class);
     pdfPostJob = new PDFPostJob(settings, fs);
   }
 
