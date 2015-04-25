@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.utils.HttpDownloader.HttpException;
@@ -35,6 +34,7 @@ import org.sonar.report.pdf.entity.exception.ReportException;
 import org.sonar.report.pdf.util.Credentials;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.SonarClient;
+import org.sonar.wsclient.internal.EncodingUtils;
 import org.sonar.wsclient.issue.Issue;
 import org.sonar.wsclient.issue.IssueClient;
 import org.sonar.wsclient.issue.IssueQuery;
@@ -80,7 +80,6 @@ public class RuleBuilder {
    * 
    * @return
    * @throws UnsupportedEncodingException
-   * @throws DocumentException
    * @throws IOException
    * @throws HttpException
    */
@@ -97,7 +96,9 @@ public class RuleBuilder {
       IssueClient issueClient = client.issueClient();
 
       IssueQuery issueQuery = IssueQuery.create();
-      issueQuery.componentRoots(projectKey);
+      // because the ws method is not implemeted in ws client api/search/issues client API
+      issueQuery.urlParams().put("componentKeys", EncodingUtils.toQueryParam(new String[]{projectKey}));
+      issueQuery.onComponentOnly(false);
       issueQuery.pageSize(20);
       issueQuery.rules(ruleKey);
       // "&scopes=FIL&depth=-1&limit=20
